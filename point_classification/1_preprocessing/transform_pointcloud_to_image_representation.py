@@ -18,23 +18,26 @@ file_names = ["1-dust", "2-dust", "3-dust", "4-dust", "5-dust", "6-dust", "7-dus
                   "8-dust", "9-smoke", "10-smoke", "11-smoke", "12-smoke", "13-smoke",
                   "14-smoke", "15-smoke", "16-smoke", "17-smoke", "18-smoke", "19-smoke"]
 file_names = ["1_pred", "5_pred", "6_pred", "10_pred", "13_pred", "15_pred", "16_pred", "18_pred"]
-
+file_names = ["1-dust", "2-dust", "3-dust", "4-dust", "5-dust", "6-dust", "7-dust",
+                  "8-dust", "9-smoke", "10-smoke", "11-smoke", "12-smoke", "13-smoke",
+                  "14-smoke", "15-smoke", "16-smoke", "17-smoke", "18-smoke", "19-smoke"]
+file_names = ["1-dust_labeled_spaces", "2-dust_labeled_spaces" ]
 path = "/home/juli/Desktop/icp_pred/"
 path = "/media/juli/98F29C83F29C67721/SemesterProject/1_data/4_icp/general/"
-path = "/home/juli/Downloads/"
+path = "./dataset/"
 
 def process_datasets(name):
-    print name
+    print(name)
     global width
     frames = np.load(name + ".npy")  # type: numpy file containing all of the labeled pointcloud points
-    print frames.shape
+    print(frames.shape)
     if bool_self_detect_width:
         width = 0
         for frame in frames:
             rings = frame[:, 4]
             for ring in np.unique(rings):
                 width = np.fmax(width, len(frame[ring == rings]))
-        print width
+        print(width)
 
     rings = np.unique(frames[0, :, 4]) # Array which contains all rings values
 
@@ -44,11 +47,11 @@ def process_datasets(name):
         images = np.zeros([len(frames), len(rings), width, frames[0].shape[1]+2], dtype=np.float32) # 2 times radius
     # 9 channels will be written: d_1,x_1,y_1,z_1,i_1,r_1,l_none,l_dust,l_smoke
     else:
-        print len(frames), len(rings), width, frames[0].shape[1] + 1
+        print(len(frames), len(rings), width, frames[0].shape[1] + 1)
         images = np.zeros([len(frames), len(rings), width, frames[0].shape[1] + 1], dtype=np.float32) # 1 time radius
     counter = 0
     for i, frame in enumerate(frames):
-        print i
+        print(i)
         counter += 1
         x_zero_indices = frame[:, 0] == 0 # Checks where x values are 0
         y_zero_indices = frame[:, 1] == 0 # Checks where y values are 0

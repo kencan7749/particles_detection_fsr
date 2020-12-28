@@ -8,7 +8,7 @@ from tensorflow.python.keras import backend as K
 from tensorflow.python.client import session as sess
 import matplotlib.pyplot as plt
 import time
-
+from PIL import Image
 # Helper libraries
 import numpy as np
 import os
@@ -16,12 +16,13 @@ import glob
 import zipfile
 import functools
 import h5py
-from scipy.misc import imresize
+#from scipy.misc import imresize
 
 
-load_weights_file = "/home/juli/Desktop/models/weights_big_dataset_single_point_cloud_geometry.hdf5"
+load_weights_file = "./dataset/models/weights_big_dataset_single_point_cloud_geometry.hdf5"
 load_file_test = "/media/juli/98F29C83F29C67721/SemesterProject/data/2_validation/kitti_2011_09_26_drive_0001_synced_with_rings_labeled_img_3125"
 load_file_test = "/home/juli/Desktop/1-dust_labeled_spaces_img"
+load_file_test = "./dataset/1-dust_labeled_spaces_img"
 #img_shape = (32, 2144, 4)
 #number_channels = 2
 batch_size = 2
@@ -31,7 +32,7 @@ images_test = np.load(load_file_test + ".npy")
 #images_test = images_test[:,::-1]
 #images_test = images_test[:,:32]
 #images_test = images_test[:,0::2]
-print images_test.shape
+print(images_test.shape)
 # Find out appropriate width of image
 # To be as general as possible
 width_pixel = len(images_test[0,0,:])
@@ -60,7 +61,7 @@ labels = labels[:,:,:width_pixel,:]
 #features = new_features
 #del new_features
 
-print features.shape
+print(features.shape)
 
 img_shape = (features.shape[1:4])
 
@@ -167,7 +168,7 @@ del images_test
     #print(i)
 predicted_label = model.predict_generator(generator(features, labels),
                               steps=int(np.floor(len(features) / float(batch_size))))
-print predicted_label.shape
+print(predicted_label.shape)
 output[:,:,:width_pixel,output.shape[3]-3:] = predicted_label[:,:,:,:]
 output[:,:,width_pixel:,output.shape[3]-3:] = np.asarray([1,0,0]) # For all non labeled pixels assume non smoke and non dust
 

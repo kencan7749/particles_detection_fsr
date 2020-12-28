@@ -19,24 +19,25 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--cluster", help="Runs script on cluster")
 args = parser.parse_args()
-
+path = "./dataset/"
 for run in range(10):
 
     # Data definitions
     file_names = ["1-dust", "2-dust", "3-dust", "4-dust", "5-dust", "6-dust", "7-dust",
                   "8-dust", "9-smoke", "10-smoke", "11-smoke", "12-smoke", "13-smoke",
                   "14-smoke", "15-smoke", "16-smoke", "17-smoke", "18-smoke", "19-smoke"]
+    file_names = ["1-dust", "2-dust"]
     metapath = "metadata.npy"
 
-    train_indices = [1, 2, 3, 6, 7, 8, 10, 11, 13, 16, 18]
-    test_indices = [0, 4, 5, 9, 12, 14, 15, 17]
+    train_indices = [0,1]
+    test_indices = [0,1]
     NAME = '111_dual_point_cloud_all_info_run_' + str(run+1)
 
     # In case we run it on the local pc
     if not args.cluster:
         for i in range(len(file_names)):
-            file_names[i] = "/home/juli/Downloads/" + file_names[i]
-        metapath = "/home/juli/Downloads/" + metapath
+            file_names[i] = path + file_names[i]
+        metapath = path + metapath
     # Complete filenames
     for i in range(len(file_names)):
         file_names[i] = file_names[i] + "_labeled_spaces_img.npy"
@@ -63,8 +64,8 @@ for run in range(10):
         meta_vector[:,:] = meta
         images_train = np.concatenate([images_train, current_images], axis = 0)
         meta_train = np.concatenate([meta_train, meta_vector], axis = 0)
-    print images_train.shape
-    print meta_train.shape
+    print(images_train.shape)
+    print(meta_train.shape)
     # Test Set
     for i in range(len(test_indices)-1):
         current_images = np.load(file_names[test_indices[i+1]])[metadata[test_indices[i+1],
@@ -74,8 +75,8 @@ for run in range(10):
         meta_vector[:,:] = meta
         images_test = np.concatenate([images_test, current_images], axis = 0)
         meta_test = np.concatenate([meta_test, meta_vector], axis=0)
-    print images_test.shape
-    print meta_test.shape
+    print(images_test.shape)
+    print(meta_test.shape)
 
     # --------------------------------Start of actual software---------------------------------
 
@@ -175,9 +176,12 @@ for run in range(10):
 
     save_model_weights = 'models/weights_big_dataset_' + NAME +'.hdf5'
     #save_model = 'models/model_big_dataset_always_update.hdf5'
+    log_dir = 'logs\\' + NAME
+    os.makedirs('models', exist_ok=True)
+    os.makedirs(log_dir, exist_ok=True)
     cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_weights, monitor='val_dice_loss', save_best_only=False, verbose=1)
-    cp2 = tf.keras.callbacks.TensorBoard(log_dir='logs/' + NAME, histogram_freq=0,
-                              write_graph=True, write_images=False)
+    cp2 = tf.keras.callbacks.TensorBoard(log_dir='logs\\' + NAME, histogram_freq=0,
+                              write_graph=False, write_images=False)
 
     # Function to augment data and keep randomly selected image of width "width_pixel"
     def augment_data(img, label_img, meta_img):
@@ -187,8 +191,8 @@ for run in range(10):
         if middle_angle < 0: # Guarantess that at least end or start is in interval
             middle_angle += 2*np.pi
         middle_index = int(np.rint((width)*(middle_angle)/(2*np.pi)))
-        start_index = middle_index - width_pixel/2
-        end_index = middle_index + width_pixel/2
+        start_index = int(middle_index - width_pixel/2)
+        end_index = int(middle_index + width_pixel/2)
         if start_index >= 0 and end_index < width:
             img = img[:, start_index:end_index]
             label_img = label_img[:, start_index:end_index]
@@ -220,7 +224,7 @@ for run in range(10):
     def generator(features, labels, meta_train):
         while True:
             print("\naugmented!\n")
-            print int(np.ceil(len(features) / float(batch_size)))
+            print(int(np.ceil(len(features) / float(batch_size))))
             # Shuffle Arrays in same manner
             permutation = np.random.permutation(len(features))
             features = features[permutation]

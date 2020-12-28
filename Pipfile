@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+matplotlib = "*"
+jupyter = "*"
+joblib = "*"
+opencv-python = "*"
+h5py = "*"
+tensorflow = "==1.14"
+scikit-learn = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"

@@ -14,9 +14,9 @@ file_names = ["/1-dust", "/2-dust", "/3-dust", "/4-dust", "/5-dust", "/6-dust", 
               "/10-smoke", "/11-smoke", "/12-smoke", "/13-smoke", "/14-smoke", "/15-smoke", "/16-smoke",
               "/17-smoke", "/18-smoke", "/19-smoke"]
 test_indices = [0, 4, 5, 9, 12, 14, 15, 17]
-
+test_indices = [0]
 file_path = "/media/juli/98F29C83F29C67722/SemesterProject/1_data/1_Upload/final"
-file_path = "/media/juli/98F29C83F29C67722/SemesterProject/1_data/4_icp/julian/all_files"
+file_path = "./dataset/"
 
 weight_names = ["weights_big_dataset_111_dual_point_cloud_all_info_run_", "weights_big_dataset_112_dual_point_cloud_all_info_v_u_run_",
                 "weights_big_dataset_121_dual_point_cloud_geometry_run_", "weights_big_dataset_122_dual_point_cloud_geometry_v_u_run_",
@@ -26,8 +26,9 @@ weight_names = ["weights_big_dataset_111_dual_point_cloud_all_info_run_", "weigh
                 "weights_big_dataset_231_single_point_cloud_intensities_run_", "weights_big_dataset_232_single_point_cloud_intensities_v_u_run_"]
 #weight_names = weight_names[::-1] # Flip weight_names
 weights_path = "/home/juli/Desktop/models/"
+weights_path = "./models/"
 
-eval_dir = "/home/juli/Desktop/"
+eval_dir = "./evals/"
 
 width_pixel = 2172
 width_pixel = width_pixel - width_pixel % 16
@@ -38,7 +39,8 @@ with open(osp.join(eval_dir, 'eval_results.txt'), 'w') as f:
     for ind in test_indices:
         f.write('%s\n' % file_names[ind])
 
-for run in range(1, 11):
+#for run in range(1, 11):
+for run in range(1, 2):
     for weight_name in weight_names:
         weights_file = weights_path + weight_name + str(run) + ".hdf5"
         print("Currently investigating: " + weights_file)
@@ -82,8 +84,8 @@ for run in range(1, 11):
                 labels_pred = np.concatenate((labels_pred, labels_pred_temp), axis = 0)
 
             del labels_target_temp, labels_pred_temp
-        print labels_target.shape
-        print labels_pred.shape
+        print(labels_target.shape)
+        print(labels_pred.shape)
         # Do the evaluation for this run (and all records together)
 
         # Allocate Vector which will contain all labels

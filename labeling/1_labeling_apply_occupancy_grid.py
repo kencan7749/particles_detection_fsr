@@ -19,11 +19,13 @@ file_names = ["/1-dust", "/2-dust", "/3-dust", "/4-dust", "/5-dust", "/6-dust", 
               "/10-smoke", "/11-smoke", "/12-smoke", "/13-smoke", # QUT bags
               "/14-smoke", "/15-smoke", "/16-smoke", "/17-smoke", "/18-smoke", "/19-smoke"] #,
 #              "/20-smoke", "/21-smoke", "/22-smoke", "/23-smoke", "/24-smoke", "/25-smoke"]
+file_names = ["/1-dust"]
 file_names = file_names[::-1]
 print(file_names)
 #file_names = ["/2-dust"]
-path = "/media/juli/98F29C83F29C67721/SemesterProject/data/Upload/1_train_val_set/numpy_files"
+#path = "/media/juli/98F29C83F29C67721/SemesterProject/data/Upload/1_train_val_set/numpy_files"
 #path = "/home/juli/Downloads"
+path = "./dataset"
 #file_names = ["/test"]
 amount_labels = 3 # label_none, label_dust, label_smoke
 
@@ -203,7 +205,7 @@ def generate_file_accumulated(frames, number_static_frames):
 
     lock = multiprocessing.Lock()
     def process_frame(frame_id):
-        print frame_id
+        print(frame_id)
         dynamic_scene = np.zeros((len(rings_present), image_width, 7), dtype=np.float32)
         for ring_id in rings_present:
             temporal_scene = np.zeros((image_width, 7), dtype=np.float32)
@@ -240,13 +242,13 @@ for name in file_names:
     example_frame = frames[0]
     amount_rings = len(np.unique(example_frame[:, 4]))
     del example_frame
-    print amount_rings
+    print(amount_rings)
     max_num_pts_per_ring = 0
     for frame in frames:
         rings = frame[:, 4]
         for ring in np.unique(rings):
             max_num_pts_per_ring = np.fmax(max_num_pts_per_ring, len(frame[ring == rings]))
-    print max_num_pts_per_ring
+    print(max_num_pts_per_ring)
 
     if dual_point_cloud:
         frames_2nd_echo = frames[:,:,:5]

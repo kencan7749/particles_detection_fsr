@@ -19,7 +19,7 @@ import h5py
 from scipy.misc import imresize
 
 
-load_weights_file = "/home/juli/Desktop/models/weights_big_dataset_111_dual_point_cloud_all_info_run_8.hdf5"
+load_weights_file = "./dataset/trained_models/weights_big_dataset_111_dual_point_cloud_all_info_run_1.hdf5"
 load_file_test = "/media/juli/98F29C83F29C67722/SemesterProject/1_data/4_icp/julian/17_pred_img"
 load_file_test = "/home/juli/Downloads/18_pred_img"
 
