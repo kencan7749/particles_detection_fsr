@@ -97,7 +97,7 @@ def process_datasets(name):
     np.save(name + "_img.npy", images)
 
 for name_start in file_names:
-    name = path + name_start + parth_end
+    name = path + name_start + path_end
     process_datasets(name)
 
 
