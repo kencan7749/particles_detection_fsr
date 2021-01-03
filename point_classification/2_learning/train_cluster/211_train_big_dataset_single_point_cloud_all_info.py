@@ -30,7 +30,8 @@ for run in range(10):
     metapath = "metadata.npy"
 
     train_indices = [1, 2, 3, 6, 7, 8, 10, 11, 13, 16, 18]
-    train_indices = [1, 2, 3, 6, 7, 8, 10, 11, 13, 16, 18]
+    #the public dataset is missing 9-smoke
+    train_indices = [1, 2, 3, 6, 7, 10, 11, 13, 16, 18]
     test_indices = [0, 4, 5, 9, 12, 14, 15, 17]
     NAME = '211_single_point_cloud_all_info_run_' + str(run+1)
 
