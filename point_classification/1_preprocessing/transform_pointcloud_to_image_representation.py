@@ -21,6 +21,9 @@ file_names = ["1_pred", "5_pred", "6_pred", "10_pred", "13_pred", "15_pred", "16
 file_names = ["1-dust", "2-dust", "3-dust", "4-dust", "5-dust", "6-dust", "7-dust",
                   "8-dust", "9-smoke", "10-smoke", "11-smoke", "12-smoke", "13-smoke",
                   "14-smoke", "15-smoke", "16-smoke", "17-smoke", "18-smoke", "19-smoke"]
+#the public dataset is missing 9-smoke
+file_names = ["10-smoke", "11-smoke", "12-smoke", "13-smoke",
+                  "14-smoke", "15-smoke", "16-smoke", "17-smoke", "18-smoke", "19-smoke"]
 #file_names = ["1-dust_labeled_spaces", "2-dust_labeled_spaces" ]
 path_end = "_labeled_spaces"
 path = "/media/juli/98F29C83F29C67721/SemesterProject/1_data/4_icp/general/"
