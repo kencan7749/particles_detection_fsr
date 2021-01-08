@@ -21,7 +21,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="1"
 parser = argparse.ArgumentParser()
 parser.add_argument("--cluster", help="Runs script on cluster")
 args = parser.parse_args()
-gpu_count = 2
+gpu_count = 4
 path = "./dataset/"
 for run in range(10):
 
@@ -175,7 +175,7 @@ for run in range(10):
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         return loss
 
-    model = tf.keras.utils.multi_gpu_model(model) # add
+    model = tf.keras.utils.multi_gpu_model(model, gpus=gpu_count) # add
     model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'])
 
     model.summary()
