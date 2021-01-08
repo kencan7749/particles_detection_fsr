@@ -16,6 +16,8 @@ import functools
 import h5py
 
 import argparse
+
+os.environ["CUDA_VISIBLE_DEVICES"]="1" 
 parser = argparse.ArgumentParser()
 parser.add_argument("--cluster", help="Runs script on cluster")
 args = parser.parse_args()
