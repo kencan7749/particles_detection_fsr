@@ -21,7 +21,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="1"
 parser = argparse.ArgumentParser()
 parser.add_argument("--cluster", help="Runs script on cluster")
 args = parser.parse_args()
-gpu_count = 4
+gpu_count = 1
 path = "./dataset/"
 for run in range(10):
 
