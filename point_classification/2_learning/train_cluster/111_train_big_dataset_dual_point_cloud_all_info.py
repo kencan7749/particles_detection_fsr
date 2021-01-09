@@ -16,12 +16,17 @@ import functools
 import h5py
 
 import argparse
+from tensorflow.python.client import device_lib
+
+def get_available_gpus():
+    local_device_protos = device_lib.list_local_devices()
+    return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
 os.environ["CUDA_VISIBLE_DEVICES"]="1" 
 parser = argparse.ArgumentParser()
 parser.add_argument("--cluster", help="Runs script on cluster")
 args = parser.parse_args()
-gpu_count = 1
+gpu_count = 2
 path = "./dataset/"
 for run in range(10):
 
