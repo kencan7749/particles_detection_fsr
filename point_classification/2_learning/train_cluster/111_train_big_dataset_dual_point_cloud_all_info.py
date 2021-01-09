@@ -22,7 +22,7 @@ def get_available_gpus():
     local_device_protos = device_lib.list_local_devbices()
     return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
-os.environ["CUDA_VISIBLE_DEVICES"]="1,3" 
+#os.environ["CUDA_VISIBLE_DEVICES"]="1,3" 
 parser = argparse.ArgumentParser()
 parser.add_argument("--cluster", help="Runs script on cluster")
 args = parser.parse_args()
@@ -180,7 +180,10 @@ for run in range(10):
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         return loss
 
-    model = tf.keras.utils.multi_gpu_model(model, gpus=gpu_count) # add
+    try:
+        model = tf.keras.utils.multi_gpu_model(model, gpus=None) # add
+    except:
+        pass
     model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'])
 
     model.summary()
