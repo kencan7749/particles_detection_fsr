@@ -19,10 +19,10 @@ import argparse
 from tensorflow.python.client import device_lib
 
 def get_available_gpus():
-    local_device_protos = device_lib.list_local_devices()
+    local_device_protos = device_lib.list_local_devbices()
     return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
-os.environ["CUDA_VISIBLE_DEVICES"]="1,2" 
+os.environ["CUDA_VISIBLE_DEVICES"]="1,3" 
 parser = argparse.ArgumentParser()
 parser.add_argument("--cluster", help="Runs script on cluster")
 args = parser.parse_args()
