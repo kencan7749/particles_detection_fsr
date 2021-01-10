@@ -17,9 +17,9 @@ import h5py
 
 import argparse
 from tensorflow.python.client import device_lib
-from tfdeterminism import patch
+#from tfdeterminism import patch
 ###for reproducibility
-patch() 
+#patch() 
 
 def get_available_gpus():
     local_device_protos = device_lib.list_local_devbices()
@@ -183,7 +183,7 @@ for run in range(10):
         return loss
 
     def bce_dice_loss(y_true, y_pred):
-        #print(losses.binary_crossentropy(y_true, y_pred))
+        tf.print(losses.binary_crossentropy(y_true, y_pred))
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         return loss
 
@@ -264,6 +264,8 @@ for run in range(10):
                                                   meta_train[batch_size*i+c])
                     feature_new[c,:,:,:] = feature
                     label_new[c,:,:,:] = label
+                assert not np.any(np.isnan(feature_new))
+                assert not np.any(np.isnan(label_new))
                 yield feature_new, label_new
 
     history = model.fit_generator(generator(features_train, labels_train, meta_train),
