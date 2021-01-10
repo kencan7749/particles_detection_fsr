@@ -17,6 +17,9 @@ import h5py
 
 import argparse
 from tensorflow.python.client import device_lib
+from tfdeterminisim import patch
+###for reproducibility
+patch() 
 
 def get_available_gpus():
     local_device_protos = device_lib.list_local_devbices()
@@ -177,12 +180,15 @@ for run in range(10):
         return loss
 
     def bce_dice_loss(y_true, y_pred):
+        assert np.isnan(losses.binary_crossentropy(y_true, y_pred))
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         return loss
 
     try:
         model = tf.keras.utils.multi_gpu_model(model, gpus=None) # add
+        print('Multiple GPU!!')
     except:
+        print('Single GPU...')
         pass
     model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'])
 
