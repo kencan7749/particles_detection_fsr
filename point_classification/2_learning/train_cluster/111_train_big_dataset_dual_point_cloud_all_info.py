@@ -183,7 +183,7 @@ for run in range(10):
         return loss
 
     def bce_dice_loss(y_true, y_pred):
-        print(losses.binary_crossentropy(y_true, y_pred))
+        #print(losses.binary_crossentropy(y_true, y_pred))
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         return loss
 
