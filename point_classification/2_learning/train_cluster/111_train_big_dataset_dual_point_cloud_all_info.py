@@ -17,7 +17,7 @@ import h5py
 
 import argparse
 from tensorflow.python.client import device_lib
-from tfdeterminisim import patch
+from tfdeterminism import patch
 ###for reproducibility
 patch() 
 
