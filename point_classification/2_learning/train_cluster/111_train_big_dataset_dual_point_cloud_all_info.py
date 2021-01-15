@@ -195,7 +195,7 @@ for run in range(10):
     def bce_dice_loss(y_true, y_pred):
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         #assert np.isnan(loss.eval(session=tf.compat.v1.Session()))
-        tf.print('bce_dice_loss:', loss)
+        #tf.print('bce_dice_loss:', loss)
         return loss
 
     try:
