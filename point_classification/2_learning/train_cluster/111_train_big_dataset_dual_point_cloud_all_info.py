@@ -14,7 +14,7 @@ import glob
 import zipfile
 import functools
 import h5py
-
+import random as rn
 import argparse
 from tensorflow.python.client import device_lib
 #from tfdeterminism import patch
@@ -25,7 +25,16 @@ def get_available_gpus():
     local_device_protos = device_lib.list_local_devbices()
     return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
-#os.environ["CUDA_VISIBLE_DEVICES"]="1,3" 
+#os.environ["CUDA_VISIBLE_DEVICES"]="1,3"
+# os.environ['PYTHONHASHSEED'] = '0'
+np.random.seed(7)
+rn.seed(7)
+
+session_conf = tf.ConfigProto(
+    intra_op_parallelism_threads=1,
+    inter_op_parallelism_threads=1
+)
+ 
 parser = argparse.ArgumentParser()
 parser.add_argument("--cluster", help="Runs script on cluster")
 args = parser.parse_args()
@@ -186,7 +195,7 @@ for run in range(10):
     def bce_dice_loss(y_true, y_pred):
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         #assert np.isnan(loss.eval(session=tf.compat.v1.Session()))
-        #tf.print(loss)
+        tf.print('bce_dice_loss:', loss)
         return loss
 
     try:
