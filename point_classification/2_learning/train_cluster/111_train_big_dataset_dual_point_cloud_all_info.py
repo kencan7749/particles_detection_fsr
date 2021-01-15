@@ -44,7 +44,7 @@ for run in range(10):
     #the public dataset is missing 9-smoke
     train_indices = [1, 2, 3, 6, 7, 10, 11, 13, 16, 18]
     test_indices = [0, 4, 5, 9, 12, 14, 15, 17]
-    #file_names = ["1-dust", "2-dust"]
+    file_names = ["1-dust", "2-dust"]
     train_indices = [0,1]
     test_indices = [0,1]
     NAME = '111_dual_point_cloud_all_info_run_' + str(run+1)
@@ -176,6 +176,7 @@ for run in range(10):
         y_pred_f = tf.reshape(y_pred, [-1])
         intersection = tf.reduce_sum(y_true_f * y_pred_f)
         score = (2. * intersection + smooth) / (tf.reduce_sum(y_true_f) + tf.reduce_sum(y_pred_f) + smooth)
+        #assert np.isnan(score.eval(session=tf.compat.v1.Session()))
         return score
 
     def dice_loss(y_true, y_pred):
@@ -183,8 +184,9 @@ for run in range(10):
         return loss
 
     def bce_dice_loss(y_true, y_pred):
-        tf.print(losses.binary_crossentropy(y_true, y_pred))
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
+        #assert np.isnan(loss.eval(session=tf.compat.v1.Session()))
+        #tf.print(loss)
         return loss
 
     try:
