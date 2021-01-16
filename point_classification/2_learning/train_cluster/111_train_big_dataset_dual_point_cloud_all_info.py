@@ -237,8 +237,16 @@ for run in range(10):
 
             epochs = self.epochs
             samples = self.samples
-            batch_size = self.batch_size
+            #batch_size = self.batch_size
             sample = batch_size*(batch)
+
+            # '\r' と end='' を使って改行しないようにする
+    if self.last_val_acc and self.last_val_loss:
+      # val_acc/val_loss が表示可能
+      print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f - val_acc: %f val_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss, self.last_val_acc, self.last_val_loss), end='')
+    else:
+      # val_acc/val_loss が表示不可
+      print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss), end='')
 
         # batch開始時
         def on_batch_begin(self, batch, logs={}):
@@ -253,7 +261,7 @@ for run in range(10):
             self.last_loss = logs.get('loss') if logs.get('loss') else 0.0
 
             # 進捗表示
-            #self.print_progress()
+            self.print_progress()
         # epoch開始時
         def on_epoch_begin(self, epoch, log={}):
             self.now_epoch = epoch
