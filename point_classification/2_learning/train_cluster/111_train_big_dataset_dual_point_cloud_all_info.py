@@ -24,9 +24,9 @@ from tensorflow.python.client import device_lib
 ###for reproducibility
 #patch() 
 
-def get_available_gpus():
-    local_device_protos = device_lib.list_local_devbices()
-    return [x.name for x in local_device_protos if x.device_type == 'GPU']
+#def get_available_gpus():
+#    local_device_protos = device_lib.list_local_devbices()
+#    return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
 #os.environ["CUDA_VISIBLE_DEVICES"]="1,3"
 
