@@ -244,10 +244,10 @@ for run in range(10):
             # '\r' と end='' を使って改行しないようにする
             if self.last_val_acc and self.last_val_loss:
                 # val_acc/val_loss が表示可能
-                print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f - val_acc: %f val_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss, self.last_val_acc, self.last_val_loss), end='')
+                print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f dice_loss: %f - val_acc: %f val_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss, self.dice_loss,self.last_val_acc, self.last_val_loss), end='')
             else:
                 # val_acc/val_loss が表示不可
-                print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss), end='')
+                print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f dice_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss,self.dice_loss), end='')
 
         # fit開始時
         def on_train_begin(self, logs={}):
@@ -257,6 +257,14 @@ for run in range(10):
             self.epochs = self.params['epochs']
             self.samples = self.params['samples']
             self.batch_size = self.params['batch_size']
+            if self.batch_size is None:
+                self.batch_size = batch_size
+
+            print('epoch' + str(self.epochs))
+            print('sampl' + str(self.samples))
+            print('batch' + str(self.batch_size))
+
+            #assert 1 == 0
 
             # 標準の進捗表示をしないようにする
             self.params['verbose'] = 0
@@ -271,6 +279,7 @@ for run in range(10):
             # 最新情報の更新
             self.last_acc = logs.get('acc') if logs.get('acc') else 0.0
             self.last_loss = logs.get('loss') if logs.get('loss') else 0.0
+            self.dice_loss = logs.get('dice_loss') if logs.get('dice_loss') else 0.0
 
             # 進捗表示
             self.print_progress()
