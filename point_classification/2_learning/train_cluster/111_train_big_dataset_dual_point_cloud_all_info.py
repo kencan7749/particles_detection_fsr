@@ -1,12 +1,3 @@
-# TensorFlow and tf.keras
-import tensorflow as tf
-import tensorflow.contrib as tfcontrib
-from tensorflow.python.keras import layers
-from tensorflow.python.keras import losses
-from tensorflow.python.keras import models
-from tensorflow.python.keras import backend as K
-from tensorflow.python.client import session as sess
-
 # Helper libraries
 import numpy as np
 import os
@@ -16,6 +7,18 @@ import functools
 import h5py
 import random as rn
 import argparse
+os.environ['PYTHONHASHSEED'] = '0'
+np.random.seed(7)
+rn.seed(7)
+
+# TensorFlow and tf.keras
+import tensorflow as tf
+import tensorflow.contrib as tfcontrib
+from tensorflow.python.keras import layers
+from tensorflow.python.keras import losses
+from tensorflow.python.keras import models
+from tensorflow.python.keras import backend as K
+from tensorflow.python.client import session as sess
 from tensorflow.python.client import device_lib
 #from tfdeterminism import patch
 ###for reproducibility
@@ -26,9 +29,7 @@ def get_available_gpus():
     return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
 #os.environ["CUDA_VISIBLE_DEVICES"]="1,3"
-# os.environ['PYTHONHASHSEED'] = '0'
-np.random.seed(7)
-rn.seed(7)
+
 
 session_conf = tf.ConfigProto(
     intra_op_parallelism_threads=1,
@@ -283,12 +284,14 @@ for run in range(10):
                 assert not np.any(np.isnan(label_new))
                 yield feature_new, label_new
 
-    history = model.fit_generator(generator(features_train, labels_train, meta_train),
-                                  steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
-                                  epochs = epochs,
-                                  validation_data=(features_test, labels_test),
-                                  validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
-                                  callbacks=[cp, cp2])
+    #with tf.device('/gpu:0'):
+    with tf.device('/cpu:0'):
+        history = model.fit_generator(generator(features_train, labels_train, meta_train),
+                                    steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
+                                    epochs = epochs,
+                                    validation_data=(features_test, labels_test),
+                                    validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
+                                    callbacks=[cp, cp2])
 
     #history = model.fit(dataset,
     #                   steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
