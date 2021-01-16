@@ -222,6 +222,7 @@ for run in range(10):
     cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_weights, monitor='val_dice_loss', save_best_only=False, verbose=1)
     cp2 = tf.keras.callbacks.TensorBoard(log_dir='logs\\' + NAME, histogram_freq=0,
                               write_graph=False, write_images=False)
+    import datetime
     class CheckNaN(tf.keras.callbacks.Callback):
         # コンストラクタ
         def __init__(self):
