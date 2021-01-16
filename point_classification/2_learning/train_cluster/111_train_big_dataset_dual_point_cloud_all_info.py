@@ -237,17 +237,28 @@ for run in range(10):
 
             epochs = self.epochs
             samples = self.samples
-            #batch_size = self.batch_size
-            #sample = batch_size*(batch)
+            batch_size = self.batch_size
+            sample = batch_size*(batch)
 
             # '\r' と end='' を使って改行しないようにする
             if self.last_val_acc and self.last_val_loss:
                 # val_acc/val_loss が表示可能
-                print("\rManual Epoch %d/%d (/%d) -- acc: %f loss: %f - val_acc: %f val_loss: %f" % (epoch+1, epochs, samples, self.last_acc, self.last_loss, self.last_val_acc, self.last_val_loss), end='')
+                print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f - val_acc: %f val_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss, self.last_val_acc, self.last_val_loss), end='')
             else:
                 # val_acc/val_loss が表示不可
-                print("\rManual Epoch %d/%d (/%d) -- acc: %f loss: %f" % (epoch+1, epochs,  samples, self.last_acc, self.last_loss), end='')
+                print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss), end='')
 
+        # fit開始時
+        def on_train_begin(self, logs={}):
+            print('\n##### Train Start ##### ' + str(datetime.datetime.now()))
+
+            # パラメータの取得
+            self.epochs = self.params['epochs']
+            self.samples = self.params['samples']
+            self.batch_size = self.params['batch_size']
+
+            # 標準の進捗表示をしないようにする
+            self.params['verbose'] = 0
         # batch開始時
         def on_batch_begin(self, batch, logs={}):
             self.now_batch = batch
