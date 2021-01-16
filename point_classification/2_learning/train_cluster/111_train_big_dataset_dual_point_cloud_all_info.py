@@ -1,3 +1,16 @@
+# Helper libraries
+import numpy as np
+import os
+import glob
+import zipfile
+import functools
+import h5py
+import random as rn
+import argparse
+os.environ['PYTHONHASHSEED'] = '0'
+np.random.seed(7)
+rn.seed(7)
+
 # TensorFlow and tf.keras
 import tensorflow as tf
 import tensorflow.contrib as tfcontrib
@@ -6,23 +19,27 @@ from tensorflow.python.keras import losses
 from tensorflow.python.keras import models
 from tensorflow.python.keras import backend as K
 from tensorflow.python.client import session as sess
-
-# Helper libraries
-import numpy as np
-import os
-import glob
-import zipfile
-import functools
-import h5py
-
-import argparse
 from tensorflow.python.client import device_lib
+#from tfdeterminism import patch
+###for reproducibility
+#patch() 
 
 def get_available_gpus():
-    local_device_protos = device_lib.list_local_devices()
+    local_device_protos = device_lib.list_local_devbices()
     return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
-os.environ["CUDA_VISIBLE_DEVICES"]="1" 
+#os.environ["CUDA_VISIBLE_DEVICES"]="1,3"
+
+
+session_conf = tf.ConfigProto(
+    intra_op_parallelism_threads=1,
+    inter_op_parallelism_threads=1
+)
+
+tf.set_random_seed(7)
+sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
+K.set_session(sess)
+ 
 parser = argparse.ArgumentParser()
 parser.add_argument("--cluster", help="Runs script on cluster")
 args = parser.parse_args()
@@ -41,6 +58,9 @@ for run in range(10):
     #the public dataset is missing 9-smoke
     train_indices = [1, 2, 3, 6, 7, 10, 11, 13, 16, 18]
     test_indices = [0, 4, 5, 9, 12, 14, 15, 17]
+    file_names = ["1-dust", "2-dust"]
+    train_indices = [0,1]
+    test_indices = [0,1]
     NAME = '111_dual_point_cloud_all_info_run_' + str(run+1)
 
     # In case we run it on the local pc
@@ -170,6 +190,7 @@ for run in range(10):
         y_pred_f = tf.reshape(y_pred, [-1])
         intersection = tf.reduce_sum(y_true_f * y_pred_f)
         score = (2. * intersection + smooth) / (tf.reduce_sum(y_true_f) + tf.reduce_sum(y_pred_f) + smooth)
+        #assert np.isnan(score.eval(session=tf.compat.v1.Session()))
         return score
 
     def dice_loss(y_true, y_pred):
@@ -178,9 +199,16 @@ for run in range(10):
 
     def bce_dice_loss(y_true, y_pred):
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
+        #assert np.isnan(loss.eval(session=tf.compat.v1.Session()))
+        #tf.print('bce_dice_loss:', loss)
         return loss
 
-    model = tf.keras.utils.multi_gpu_model(model, gpus=gpu_count) # add
+    try:
+        model = tf.keras.utils.multi_gpu_model(model, gpus=None) # add
+        print('Multiple GPU!!')
+    except:
+        print('Single GPU...')
+        pass
     model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'])
 
     model.summary()
@@ -252,14 +280,18 @@ for run in range(10):
                                                   meta_train[batch_size*i+c])
                     feature_new[c,:,:,:] = feature
                     label_new[c,:,:,:] = label
+                assert not np.any(np.isnan(feature_new))
+                assert not np.any(np.isnan(label_new))
                 yield feature_new, label_new
 
-    history = model.fit_generator(generator(features_train, labels_train, meta_train),
-                                  steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
-                                  epochs = epochs,
-                                  validation_data=(features_test, labels_test),
-                                  validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
-                                  callbacks=[cp, cp2])
+    #with tf.device('/gpu:0'):
+    with tf.device('/cpu:0'):
+        history = model.fit_generator(generator(features_train, labels_train, meta_train),
+                                    steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
+                                    epochs = epochs,
+                                    validation_data=(features_test, labels_test),
+                                    validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
+                                    callbacks=[cp, cp2])
 
     #history = model.fit(dataset,
     #                   steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
