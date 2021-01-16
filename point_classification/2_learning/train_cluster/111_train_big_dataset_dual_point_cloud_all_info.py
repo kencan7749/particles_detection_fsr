@@ -241,12 +241,12 @@ for run in range(10):
             sample = batch_size*(batch)
 
             # '\r' と end='' を使って改行しないようにする
-    if self.last_val_acc and self.last_val_loss:
-      # val_acc/val_loss が表示可能
-      print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f - val_acc: %f val_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss, self.last_val_acc, self.last_val_loss), end='')
-    else:
-      # val_acc/val_loss が表示不可
-      print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss), end='')
+            if self.last_val_acc and self.last_val_loss:
+                # val_acc/val_loss が表示可能
+                print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f - val_acc: %f val_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss, self.last_val_acc, self.last_val_loss), end='')
+            else:
+                # val_acc/val_loss が表示不可
+                print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss), end='')
 
         # batch開始時
         def on_batch_begin(self, batch, logs={}):
