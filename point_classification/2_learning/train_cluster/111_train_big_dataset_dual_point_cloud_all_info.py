@@ -1,6 +1,7 @@
 # Helper libraries
 import numpy as np
 import os
+import sys
 import glob
 import zipfile
 import functools
@@ -200,7 +201,7 @@ for run in range(10):
     def bce_dice_loss(y_true, y_pred):
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         #assert np.isnan(loss.eval(session=tf.compat.v1.Session()))
-        #tf.print('bce_dice_loss:', loss)
+        tf.print(loss, output_stream=sys.stderr)
         return loss
 
     try:
@@ -221,7 +222,51 @@ for run in range(10):
     cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_weights, monitor='val_dice_loss', save_best_only=False, verbose=1)
     cp2 = tf.keras.callbacks.TensorBoard(log_dir='logs\\' + NAME, histogram_freq=0,
                               write_graph=False, write_images=False)
+    class CheckNaN(tf.keras.callbacks.Callback):
+        # コンストラクタ
+        def __init__(self):
+            self.last_acc, self.last_loss, self.last_val_acc, self.last_val_loss = None, None, None, None
+            self.now_batch, self.now_epoch = None, None
 
+            self.epochs, self.samples, self.batch_size = None, None, None
+
+        # カスタム進捗表示 (表示部本体)
+        def print_progress(self):
+            epoch = self.now_epoch
+            batch = self.now_batch
+
+            epochs = self.epochs
+            samples = self.samples
+            batch_size = self.batch_size
+            sample = batch_size*(batch)
+
+        # batch開始時
+        def on_batch_begin(self, batch, logs={}):
+            self.now_batch = batch
+            #assert self.batch
+            print(batch)
+
+        # batch完了時 (進捗表示)
+        def on_batch_end(self, batch, logs={}):
+            # 最新情報の更新
+            self.last_acc = logs.get('acc') if logs.get('acc') else 0.0
+            self.last_loss = logs.get('loss') if logs.get('loss') else 0.0
+
+            # 進捗表示
+            #self.print_progress()
+        # epoch開始時
+        def on_epoch_begin(self, epoch, log={}):
+            self.now_epoch = epoch
+
+        # epoch完了時 (進捗表示)
+        def on_epoch_end(self, epoch, logs={}):
+            # 最新情報の更新
+            self.last_val_acc = logs.get('val_acc') if logs.get('val_acc') else 0.0
+            self.last_val_loss = logs.get('val_loss') if logs.get('val_loss') else 0.0
+
+            # 進捗表示
+            #self.print_progress()
+    cp3 = CheckNaN()
     # Function to augment data and keep randomly selected image of width "width_pixel"
     def augment_data(img, label_img, meta_img):
         # Take random snippet around polar angle = pi/2 (y-axis) for the two dust datasets of width 512 (approx. 90 degrees)
@@ -291,7 +336,7 @@ for run in range(10):
                                     epochs = epochs,
                                     validation_data=(features_test, labels_test),
                                     validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
-                                    callbacks=[cp, cp2])
+                                    callbacks=[cp, cp2, cp3])
 
     #history = model.fit(dataset,
     #                   steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
