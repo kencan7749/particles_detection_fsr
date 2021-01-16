@@ -281,6 +281,15 @@ for run in range(10):
             self.last_loss = logs.get('loss') if logs.get('loss') else 0.0
             self.dice_loss = logs.get('dice_loss') if logs.get('dice_loss') else 0.0
 
+            if (self.last_loss is None ) and (self.dice_liss is None):
+                self.epochs = self.params['epochs']
+                self.samples = self.params['samples']
+                self.batch_size = self.params['batch_size']
+                if self.batch_size is None:
+                    self.batch_size = batch_size
+                
+                print("\rRaise NaN Epoch %d/%d (%d/%d) -- acc: %f loss: %f dice_loss: %f" % (self.epoch+1, epochs, self.sample, self.samples, self.last_acc, self.last_loss,self.dice_loss), end='')
+                assert 1 == 0
             # 進捗表示
             self.print_progress()
         # epoch開始時
