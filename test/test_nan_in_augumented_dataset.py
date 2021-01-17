@@ -164,6 +164,8 @@ def generator(features, labels, meta_train):
 
         #print('fine')
     print(feature_new.shape, label_new.shape)
+    if feature_new.shape[1] == 0:
+        print('suspect!')
     return feature_new, label_new
 
 generator(features_train, labels_train, meta_train)
