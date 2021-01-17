@@ -163,7 +163,7 @@ def generator(features, labels, meta_train):
             #   print('suspect!')
 
         #print('fine')
-    print(features_new.shape, label_new.shape)
+    print(feature_new.shape, label_new.shape)
     return feature_new, label_new
 
 generator(features_train, labels_train, meta_train)
