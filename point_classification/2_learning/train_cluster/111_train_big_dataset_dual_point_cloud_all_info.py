@@ -240,6 +240,10 @@ for run in range(10):
             samples = self.samples
             batch_size = self.batch_size
             sample = batch_size*(batch)
+            if np.isnan(self.last_loss) or np.isnan(self.dice_loss):
+                
+                print("\rRaise NaN Epoch %d/%d (%d/%d) -- acc: %f loss: %f dice_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss,self.dice_loss), end='')
+                assert 1 == 0
 
             # '\r' と end='' を使って改行しないようにする
             if self.last_val_acc and self.last_val_loss:
@@ -281,15 +285,6 @@ for run in range(10):
             self.last_loss = logs.get('loss') if logs.get('loss') else 0.0
             self.dice_loss = logs.get('dice_loss') if logs.get('dice_loss') else 0.0
             #assert 1 == 0
-            if np.isnan(self.last_loss) or np.isnan(self.dice_loss):
-                self.epochs = self.params['epochs']
-                self.samples = self.params['samples']
-                self.batch_size = self.params['batch_size']
-                if self.batch_size is None:
-                    self.batch_size = batch_size
-                
-                print("\rRaise NaN Epoch %d/%d (%d/%d) -- acc: %f loss: %f dice_loss: %f" % (self.epoch+1, epochs, self.sample, self.samples, self.last_acc, self.last_loss,self.dice_loss), end='')
-                assert 1 == 0
             # 進捗表示
             self.print_progress()
         # epoch開始時
