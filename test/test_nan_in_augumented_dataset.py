@@ -159,6 +159,9 @@ def generator(features, labels, meta_train):
             assert np.sum(label) is not None
             print(feature.shape, label.shape)
 
+            if features.shape[1] == 0:
+                print('suspect!')
+
         #print('fine')
     return feature_new, label_new
 
