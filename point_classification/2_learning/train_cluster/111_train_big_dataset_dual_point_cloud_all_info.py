@@ -280,7 +280,7 @@ for run in range(10):
             self.last_acc = logs.get('acc') if logs.get('acc') else 0.0
             self.last_loss = logs.get('loss') if logs.get('loss') else 0.0
             self.dice_loss = logs.get('dice_loss') if logs.get('dice_loss') else 0.0
-            assert 1 == 0
+            #assert 1 == 0
             if np.isnan(self.last_loss) or np.isnan(self.dice_loss):
                 self.epochs = self.params['epochs']
                 self.samples = self.params['samples']
