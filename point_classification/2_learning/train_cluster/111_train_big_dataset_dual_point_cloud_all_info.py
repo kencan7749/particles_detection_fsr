@@ -281,7 +281,7 @@ for run in range(10):
             self.last_loss = logs.get('loss') if logs.get('loss') else 0.0
             self.dice_loss = logs.get('dice_loss') if logs.get('dice_loss') else 0.0
 
-            if (self.last_loss is None ) or (self.dice_liss is None):
+            if (self.last_loss is None ) or (self.dice_loss is None):
                 self.epochs = self.params['epochs']
                 self.samples = self.params['samples']
                 self.batch_size = self.params['batch_size']
