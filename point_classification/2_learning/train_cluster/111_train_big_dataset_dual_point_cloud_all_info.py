@@ -1,6 +1,7 @@
 # Helper libraries
 import numpy as np
 import os
+import sys
 import glob
 import zipfile
 import functools
@@ -24,9 +25,9 @@ from tensorflow.python.client import device_lib
 ###for reproducibility
 #patch() 
 
-def get_available_gpus():
-    local_device_protos = device_lib.list_local_devbices()
-    return [x.name for x in local_device_protos if x.device_type == 'GPU']
+#def get_available_gpus():
+#    local_device_protos = device_lib.list_local_devbices()
+#    return [x.name for x in local_device_protos if x.device_type == 'GPU']
 
 #os.environ["CUDA_VISIBLE_DEVICES"]="1,3"
 
@@ -58,9 +59,9 @@ for run in range(10):
     #the public dataset is missing 9-smoke
     train_indices = [1, 2, 3, 6, 7, 10, 11, 13, 16, 18]
     test_indices = [0, 4, 5, 9, 12, 14, 15, 17]
-    file_names = ["1-dust", "2-dust"]
-    train_indices = [0,1]
-    test_indices = [0,1]
+    #file_names = ["1-dust", "2-dust"]
+    #train_indices = [0,1]
+    #test_indices = [0,1]
     NAME = '111_dual_point_cloud_all_info_run_' + str(run+1)
 
     # In case we run it on the local pc
@@ -200,7 +201,7 @@ for run in range(10):
     def bce_dice_loss(y_true, y_pred):
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         #assert np.isnan(loss.eval(session=tf.compat.v1.Session()))
-        #tf.print('bce_dice_loss:', loss)
+        tf.print(loss, output_stream=sys.stderr)
         return loss
 
     try:
@@ -221,7 +222,89 @@ for run in range(10):
     cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_weights, monitor='val_dice_loss', save_best_only=False, verbose=1)
     cp2 = tf.keras.callbacks.TensorBoard(log_dir='logs\\' + NAME, histogram_freq=0,
                               write_graph=False, write_images=False)
+    import datetime
+    class CheckNaN(tf.keras.callbacks.Callback):
+        # コンストラクタ
+        def __init__(self):
+            self.last_acc, self.last_loss, self.last_val_acc, self.last_val_loss = None, None, None, None
+            self.now_batch, self.now_epoch = None, None
 
+            self.epochs, self.samples, self.batch_size = None, None, None
+
+        # カスタム進捗表示 (表示部本体)
+        def print_progress(self):
+            epoch = self.now_epoch
+            batch = self.now_batch
+
+            epochs = self.epochs
+            samples = self.samples
+            batch_size = self.batch_size
+            sample = batch_size*(batch)
+
+            # '\r' と end='' を使って改行しないようにする
+            if self.last_val_acc and self.last_val_loss:
+                # val_acc/val_loss が表示可能
+                print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f dice_loss: %f - val_acc: %f val_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss, self.dice_loss,self.last_val_acc, self.last_val_loss), end='')
+            else:
+                # val_acc/val_loss が表示不可
+                print("\rManual Epoch %d/%d (%d/%d) -- acc: %f loss: %f dice_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss,self.dice_loss), end='')
+
+        # fit開始時
+        def on_train_begin(self, logs={}):
+            print('\n##### Train Start ##### ' + str(datetime.datetime.now()))
+
+            # パラメータの取得
+            self.epochs = self.params['epochs']
+            self.samples = self.params['samples']
+            self.batch_size = self.params['batch_size']
+            if self.batch_size is None:
+                self.batch_size = batch_size
+
+            print('epoch' + str(self.epochs))
+            print('sampl' + str(self.samples))
+            print('batch' + str(self.batch_size))
+
+            #assert 1 == 0
+
+            # 標準の進捗表示をしないようにする
+            self.params['verbose'] = 0
+        # batch開始時
+        def on_batch_begin(self, batch, logs={}):
+            self.now_batch = batch
+            #assert self.batch
+            print(batch)
+
+        # batch完了時 (進捗表示)
+        def on_batch_end(self, batch, logs={}):
+            # 最新情報の更新
+            self.last_acc = logs.get('acc') if logs.get('acc') else 0.0
+            self.last_loss = logs.get('loss') if logs.get('loss') else 0.0
+            self.dice_loss = logs.get('dice_loss') if logs.get('dice_loss') else 0.0
+            #assert 1 == 0
+            if np.isnan(self.last_loss) or np.isnan(self.dice_loss):
+                self.epochs = self.params['epochs']
+                self.samples = self.params['samples']
+                self.batch_size = self.params['batch_size']
+                if self.batch_size is None:
+                    self.batch_size = batch_size
+                
+                print("\rRaise NaN Epoch %d/%d (%d/%d) -- acc: %f loss: %f dice_loss: %f" % (self.epoch+1, epochs, self.sample, self.samples, self.last_acc, self.last_loss,self.dice_loss), end='')
+                assert 1 == 0
+            # 進捗表示
+            self.print_progress()
+        # epoch開始時
+        def on_epoch_begin(self, epoch, log={}):
+            self.now_epoch = epoch
+
+        # epoch完了時 (進捗表示)
+        def on_epoch_end(self, epoch, logs={}):
+            # 最新情報の更新
+            self.last_val_acc = logs.get('val_acc') if logs.get('val_acc') else 0.0
+            self.last_val_loss = logs.get('val_loss') if logs.get('val_loss') else 0.0
+
+            # 進捗表示
+            #self.print_progress()
+    cp3 = CheckNaN()
     # Function to augment data and keep randomly selected image of width "width_pixel"
     def augment_data(img, label_img, meta_img):
         # Take random snippet around polar angle = pi/2 (y-axis) for the two dust datasets of width 512 (approx. 90 degrees)
@@ -291,7 +374,7 @@ for run in range(10):
                                     epochs = epochs,
                                     validation_data=(features_test, labels_test),
                                     validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
-                                    callbacks=[cp, cp2])
+                                    callbacks=[cp, cp2, cp3])
 
     #history = model.fit(dataset,
     #                   steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
