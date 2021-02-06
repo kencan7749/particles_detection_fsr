@@ -58,7 +58,7 @@ for run in range(10):
     file_names = ["1-dust", "2-dust", "3-dust", "4-dust", "5-dust", "6-dust", "7-dust",
                   "8-dust", "9-smoke", "10-smoke", "11-smoke", "12-smoke", "13-smoke",
                   "14-smoke", "15-smoke", "16-smoke", "17-smoke", "18-smoke", "19-smoke"]
-    file_names = ["1-dust", "2-dust"]
+    #file_names = ["1-dust", "2-dust"]
     metapath = "metadata.npy"
 
     train_indices = [1, 2, 3, 6, 7, 8, 10, 11, 13, 16, 18]
