@@ -25,6 +25,11 @@ from tensorflow.python.client import device_lib
 ###for reproducibility
 #patch() 
 
+config = tf.ConfigProto()
+config.gpu_options.allow_growth=True
+sess = tf.Session(config=config)
+
+
 #def get_available_gpus():
 #    local_device_protos = device_lib.list_local_devbices()
 #    return [x.name for x in local_device_protos if x.device_type == 'GPU']
@@ -44,7 +49,6 @@ K.set_session(sess)
 parser = argparse.ArgumentParser()
 parser.add_argument("--cluster", help="Runs script on cluster")
 args = parser.parse_args()
-gpu_count = 2
 path = "./dataset/"
 for run in range(10):
 
@@ -200,16 +204,9 @@ for run in range(10):
 
     def bce_dice_loss(y_true, y_pred):
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
-        #assert np.isnan(loss.eval(session=tf.compat.v1.Session()))
-        tf.print(loss, output_stream=sys.stderr)
         return loss
 
-    try:
-        model = tf.keras.utils.multi_gpu_model(model, gpus=None) # add
-        print('Multiple GPU!!')
-    except:
-        print('Single GPU...')
-        pass
+   
     model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'])
 
     model.summary()
@@ -240,6 +237,7 @@ for run in range(10):
             samples = self.samples
             batch_size = self.batch_size
             sample = batch_size*(batch)
+            print(batch_size)
             if np.isnan(self.last_loss) or np.isnan(self.dice_loss):
                 
                 print("\rRaise NaN Epoch %d/%d (%d/%d) -- acc: %f loss: %f dice_loss: %f" % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss,self.dice_loss), end='')
@@ -364,15 +362,14 @@ for run in range(10):
                 yield feature_new, label_new
 
     #with tf.device('/gpu:0'):
-    with tf.device('cpu:0'):
-        print("tf.keras code in this scope will run on CPU")
+   
     
-        history = model.fit_generator(generator(features_train, labels_train, meta_train),
-                                    steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
-                                    epochs = epochs,
-                                    validation_data=(features_test, labels_test),
-                                    validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
-                                    callbacks=[cp, cp2, cp3])
+    history = model.fit_generator(generator(features_train, labels_train, meta_train),
+                                steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
+                                epochs = epochs,
+                                validation_data=(features_test, labels_test),
+                                validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
+                                callbacks=[cp, cp2, cp3])
 
     #history = model.fit(dataset,
     #                   steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
