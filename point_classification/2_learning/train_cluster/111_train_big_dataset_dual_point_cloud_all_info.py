@@ -1,6 +1,7 @@
 # Helper libraries
 import numpy as np
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 import sys
 import glob
 import zipfile
@@ -18,6 +19,7 @@ import tensorflow.contrib as tfcontrib
 from tensorflow.python.keras import layers
 from tensorflow.python.keras import losses
 from tensorflow.python.keras import models
+from tensorflow.python.keras import models, optimizers
 from tensorflow.python.keras import backend as K
 from tensorflow.python.client import session as sess
 from tensorflow.python.client import device_lib
@@ -203,10 +205,10 @@ for run in range(10):
         return loss
 
     def bce_dice_loss(y_true, y_pred):
-        loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
+        # loss = losses.binary_crossentropy(y_true, y_pred) #+ dice_loss(y_true, y_pred)
+        loss =  dice_loss(y_true, y_pred)
         return loss
 
-   
     model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'])
 
     model.summary()
@@ -361,10 +363,8 @@ for run in range(10):
                 print(feature_new.shape, label_new.shape)
                 yield feature_new, label_new
 
-    #with tf.device('/gpu:0'):
-   
-    
-    history = model.fit_generator(generator(features_train, labels_train, meta_train),
+    with tf.device('/cpu:0'):
+        history = model.fit_generator(generator(features_train, labels_train, meta_train),
                                 steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
                                 epochs = epochs,
                                 validation_data=(features_test, labels_test),
