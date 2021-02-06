@@ -9,7 +9,7 @@ import functools
 import h5py
 import random as rn
 import argparse
-os.environ['PYTHONHASHSEED'] = '0'
+#os.environ['PYTHONHASHSEED'] = '0'
 np.random.seed(7)
 rn.seed(7)
 
@@ -66,8 +66,8 @@ for run in range(10):
     train_indices = [1, 2, 3, 6, 7, 10, 11, 13, 16, 18]
     test_indices = [0, 4, 5, 9, 12, 14, 15, 17]
     #file_names = ["1-dust", "2-dust"]
-    train_indices = [0,1]
-    test_indices = [0,1]
+    #train_indices = [0,1]
+    #test_indices = [0,1]
     NAME = '111_dual_point_cloud_all_info_run_' + str(run+1)
 
     # In case we run it on the local pc
@@ -205,8 +205,8 @@ for run in range(10):
         return loss
 
     def bce_dice_loss(y_true, y_pred):
-        # loss = losses.binary_crossentropy(y_true, y_pred) #+ dice_loss(y_true, y_pred)
-        loss =  dice_loss(y_true, y_pred)
+        loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
+        #loss =  dice_loss(y_true, y_pred)
         return loss
 
     model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'])
