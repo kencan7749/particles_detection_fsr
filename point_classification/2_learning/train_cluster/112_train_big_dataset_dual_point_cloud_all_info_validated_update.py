@@ -1,3 +1,12 @@
+# Helper libraries
+import numpy as np
+import os
+os.environ['PYTHONHASHSEED'] = '0'
+import glob
+import zipfile
+import functools
+import h5py
+
 # TensorFlow and tf.keras
 import tensorflow as tf
 import tensorflow.contrib as tfcontrib
@@ -7,13 +16,7 @@ from tensorflow.python.keras import models
 from tensorflow.python.keras import backend as K
 from tensorflow.python.client import session as sess
 
-# Helper libraries
-import numpy as np
-import os
-import glob
-import zipfile
-import functools
-import h5py
+
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -34,7 +37,8 @@ for run in range(10):
     train_indices = [1, 2, 3, 6,  10, 11, 13, 16]
     
     test_indices = [7,18]
-    
+    train_indices = [0,1]
+    test_indices = [0,1]
     NAME = '112_dual_point_cloud_all_info_v_u_run_' + str(run+1)
 
     # In case we run it on the local pc
