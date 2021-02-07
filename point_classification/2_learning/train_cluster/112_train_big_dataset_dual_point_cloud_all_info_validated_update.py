@@ -1,7 +1,7 @@
 # Helper libraries
 import numpy as np
 import os
-os.environ['PYTHONHASHSEED'] = '0'
+#os.environ['PYTHONHASHSEED'] = '-1'
 import glob
 import zipfile
 import functools
@@ -17,6 +17,14 @@ from tensorflow.python.keras import backend as K
 from tensorflow.python.client import session as sess
 
 
+session_conf = tf.ConfigProto(
+    intra_op_parallelism_threads=1,
+    inter_op_parallelism_threads=1
+)
+
+tf.set_random_seed(7)
+sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
+K.set_session(sess)
 
 import argparse
 parser = argparse.ArgumentParser()
