@@ -1,7 +1,7 @@
 # Helper libraries
 import numpy as np
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+#os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 import sys
 import glob
 import zipfile
@@ -9,7 +9,7 @@ import functools
 import h5py
 import random as rn
 import argparse
-#os.environ['PYTHONHASHSEED'] = '0'
+os.environ['PYTHONHASHSEED'] = '0'
 np.random.seed(7)
 rn.seed(7)
 
@@ -204,9 +204,9 @@ for run in range(10):
         loss = 1 - dice_coeff(y_true, y_pred)
         return loss
 
+
     def bce_dice_loss(y_true, y_pred):
-        loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
-        #loss =  dice_loss(y_true, y_pred)
+        loss = losses.binary_crossentropy(y_true, y_pred, reduction=tf.keras.losses.Reduction.SUM_OVER_BATCH_SIZE) + dice_loss(y_true, y_pred)
         return loss
 
     model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'])
@@ -369,7 +369,7 @@ for run in range(10):
                                 epochs = epochs,
                                 validation_data=(features_test, labels_test),
                                 validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
-                                callbacks=[cp, cp2, cp3])
+                                callbacks=[cp, cp2])
 
     #history = model.fit(dataset,
     #                   steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
