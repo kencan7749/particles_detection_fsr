@@ -194,7 +194,7 @@ for run in range(10):
 
 
     def bce_dice_loss(y_true, y_pred):
-        loss = losses.binary_crossentropy(y_true, y_pred, reduction=tf.keras.losses.Reduction.SUM_OVER_BATCH_SIZE) + dice_loss(y_true, y_pred)
+        loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         return loss
 
     model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'])
