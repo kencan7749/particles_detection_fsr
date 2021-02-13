@@ -1,6 +1,6 @@
 import os.path as osp
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
@@ -9,12 +9,28 @@ from sklearn.metrics import average_precision_score
 from sklearn.metrics import average_precision_score
 from return_model import return_model
 from generator import generator
+import tensorflow as tf
+import tensorflow.contrib as tfcontrib
+from tensorflow.python.keras import layers
+from tensorflow.python.keras import losses
+from tensorflow.python.keras import models
+from tensorflow.python.keras import backend as K
+from tensorflow.python.client import session as sess
+
+session_conf = tf.ConfigProto(
+    intra_op_parallelism_threads=1,
+    inter_op_parallelism_threads=1
+)
+
+tf.set_random_seed(7)
+sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
+K.set_session(sess)
 
 file_names = ["/1-dust", "/2-dust", "/3-dust", "/4-dust", "/5-dust", "/6-dust", "/7-dust", "/8-dust", "/9-smoke",
               "/10-smoke", "/11-smoke", "/12-smoke", "/13-smoke", "/14-smoke", "/15-smoke", "/16-smoke",
               "/17-smoke", "/18-smoke", "/19-smoke"]
 test_indices = [0, 4, 5, 9, 12, 14, 15, 17]
-test_indices = [0]
+#test_indices = [0]
 file_path = "/media/juli/98F29C83F29C67722/SemesterProject/1_data/1_Upload/final"
 file_path = "./dataset/"
 
@@ -24,6 +40,9 @@ weight_names = ["weights_big_dataset_111_dual_point_cloud_all_info_run_", "weigh
                 "weights_big_dataset_211_single_point_cloud_all_info_run_", "weights_big_dataset_212_single_point_cloud_all_info_v_u_run_",
                 "weights_big_dataset_221_single_point_cloud_geometry_run_", "weights_big_dataset_222_single_point_cloud_geometry_v_u_run_",
                 "weights_big_dataset_231_single_point_cloud_intensities_run_", "weights_big_dataset_232_single_point_cloud_intensities_v_u_run_"]
+                
+weight_names = [ "weights_big_dataset_112_dual_point_cloud_all_info_v_u_run_","weights_big_dataset_212_single_point_cloud_all_info_v_u_run_",
+               ]
 #weight_names = weight_names[::-1] # Flip weight_names
 weights_path = "/home/juli/Desktop/models/"
 weights_path = "./models/"

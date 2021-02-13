@@ -7,6 +7,15 @@ from tensorflow.python.keras import models
 from tensorflow.python.keras import backend as K
 from tensorflow.python.client import session as sess
 
+session_conf = tf.ConfigProto(
+    intra_op_parallelism_threads=1,
+    inter_op_parallelism_threads=1
+)
+
+tf.set_random_seed(7)
+sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
+K.set_session(sess)
+
 def return_model(img_shape, load_weights_file):
     # Building the model
     def conv_block(input_tensor, num_filters):
