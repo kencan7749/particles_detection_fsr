@@ -3,7 +3,7 @@
 # Helper libraries
 import numpy as np
 #import matplotlib.pyplot as plt
-import cv2
+#import cv2
 
 # Parameters you have to set manually
 dual_pcl = True # Does it have 2 echo values?

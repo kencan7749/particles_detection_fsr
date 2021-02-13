@@ -20,8 +20,10 @@ from scipy.misc import imresize
 
 
 load_weights_file = "./dataset/trained_models/weights_big_dataset_111_dual_point_cloud_all_info_run_1.hdf5"
+load_weights_file = "./models/weights_big_dataset_112_dual_point_cloud_all_info_v_u_run_1.hdf5"
 load_file_test = "/media/juli/98F29C83F29C67722/SemesterProject/1_data/4_icp/julian/17_pred_img"
 load_file_test = "/home/juli/Downloads/18_pred_img"
+load_file_test = "./dataset/1-dust_labeled_spaces_img_predicted"
 
 #load_file_test = "/media/juli/98F29C83F29C6772/SemesterProject/data/training/1-dust_labeled_spaces_img"
 #img_shape = (32, 2144, 4)
@@ -33,7 +35,7 @@ images_test = np.load(load_file_test + ".npy")
 #images_test = images_test[:,::-1]
 #images_test = images_test[:,:32]
 #images_test = images_test[:,0::2]
-print images_test.shape
+print(images_test.shape)
 # Find out appropriate width of image
 # To be as general as possible
 width_pixel = len(images_test[0,0,:])

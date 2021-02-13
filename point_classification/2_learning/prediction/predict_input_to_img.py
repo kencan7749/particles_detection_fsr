@@ -20,6 +20,7 @@ import h5py
 
 
 load_weights_file = "./dataset/models/weights_big_dataset_single_point_cloud_geometry.hdf5"
+load_weights_file = "./models/weights_big_dataset_112_dual_point_cloud_all_info_v_u_run_1.hdf5"
 load_file_test = "/media/juli/98F29C83F29C67721/SemesterProject/data/2_validation/kitti_2011_09_26_drive_0001_synced_with_rings_labeled_img_3125"
 load_file_test = "/home/juli/Desktop/1-dust_labeled_spaces_img"
 load_file_test = "./dataset/1-dust_labeled_spaces_img"
