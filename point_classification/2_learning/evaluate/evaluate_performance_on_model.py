@@ -1,5 +1,6 @@
 import os.path as osp
 import numpy as np
+from tqdm import tqdm
 #import matplotlib.pyplot as plt
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
@@ -116,7 +117,7 @@ for run in range(1, 2):
         y_target_fog = np.zeros((labels_target.shape[0], 1))
 
         # Write in prediction vector
-        for i, label in enumerate(labels_pred):
+        for i, label in tqdm(enumerate(labels_pred)):
             if np.argmax(label) == 1 or np.argmax(label) == 2:
                 y_pred_particle[i,0] = 1
             if np.argmax(label) == 1:
@@ -125,7 +126,7 @@ for run in range(1, 2):
                 y_pred_fog[i,0] = 1
         del labels_pred
         # Write in target vector
-        for i, label in enumerate(labels_target):
+        for i, label in tqdm(enumerate(labels_target)):
             if np.argmax(label) == 1 or np.argmax(label) == 2:
                 y_target_particle[i,0] = 1
             if np.argmax(label) == 1:
