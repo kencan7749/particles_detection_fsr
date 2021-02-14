@@ -59,8 +59,8 @@ with open(osp.join(eval_dir, 'eval_results.txt'), 'w') as f:
     for ind in test_indices:
         f.write('%s\n' % file_names[ind])
 
-#for run in range(1, 11):
-for run in range(1, 2):
+for run in range(1, 11):
+#for run in range(1, 2):
     for weight_name in weight_names:
         weights_file = weights_path + weight_name + str(run) + ".hdf5"
         print("Currently investigating: " + weights_file)
