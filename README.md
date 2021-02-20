@@ -6,7 +6,7 @@ Stanislas et al., 2019 [Airborne Particle Classification in LiDAR Point Clouds U
 
 [History] 
 
-2021/02/20 KS reviewed
+2021/02/20 KS finish review
 
 2021/02/13 KS created v0.5
 
@@ -25,11 +25,10 @@ I confirmed to run these scripts in this environment:
 
 ```python
 Python3.6.10
-tqdm
+tqdm= 4.56.0
 tensorflor-gpu= 1.15.0
-numpy
-scipy
-scikit-learn
+numpy=1.19.2
+scikit-learn=0.23.2
 ```
 
 
@@ -86,7 +85,7 @@ The `metadata.npy` should also be stored at `point_classification/data`.
 
 Note that the training files are now only supported "112" and "122".
 
-## 3. Evaluation (under review)
+## 3. Evaluation
 
 [Code]
 
@@ -98,7 +97,7 @@ Evaluate the performance of the trained model by precision, recall and f1 score 
 
 ##### Requirements 
 
-Trained model files and preprocessed data are needed. Trained model files should be located at `point_classification/models'` . These files are specified at line 45, `weight_names` variable to select which trained models are used for evaluation. The preprocessed data (ex. 1-dust~img.npy)  are specified at line 30,  `file_names` variables, and line 33 `test_indices` determines which data were used for evaluation.
+Trained model files and preprocessed data are needed. Trained model files should be located at `point_classification/models` . These files are specified at line 45, `weight_names` variable to select which trained models are used for evaluation. The preprocessed data (ex. 1-dust~img.npy)  are specified at line 30,  `file_names` variables, and line 33 `test_indices` determines which data were used for evaluation.
 
 [Input]
 
@@ -109,31 +108,51 @@ Trained model files and preprocessed data are needed. Trained model files should
 
 eval_result.txt located at`point_classification/evals`. This file contains the metric results of precision, recall and f1-score for all iteration model specified at `weight_names` .
 
-
-
 ###### Note that currently the evaluation script is less computational efficiency and takes much time to finish. 
 
-## 4.Prediction (under review)
+## 4.Prediction
 
 [code]
 
 For generating image
 
 ```python
-point_classification/2_learning/prediction/predict_input_to_img.py
+python point_classification/2_learning/prediction/predict_input_to_img.py
 ```
+
+Predict image from preprocessed data. 
+
+**requirements**
+
+Trained model and preprocessed file are needed. Both are specialized at line 23 and 26, respectively.
+
+[Input]
+
+- A single trained model.
+- A single preprocessed image data (e.g. "1-dust~img.npy")
+
+[Output]
+
+Predicted image by the model, named like "1-dust~img_predicted.py", which is located at `dataset` directory.
 
 For generating point cloud 
 
 ```python
-point_classification/2_learning/prediction/predict_input_to_pcl.py
+python point_classification/2_learning/prediction/predict_input_to_pcl.py
 ```
 
-###### requirement
+Predict particle from predicted image (?).
 
-```python
-numpy
-tensorflow-gpu=1.15.0
-scipy
-```
+**requirements**
+
+Trained model and predicted image file are needed. Both are specialized at line 22 and 26, respectively.
+
+[Input]
+
+- A single trained model.
+- A single predicted image data (e.g. "1-dust~img_predicted.npy")
+
+[Output]
+
+Predicted image by the model, named like "1-dust~img_predicted_pcl.py", which is located at `dataset` directory.
 
