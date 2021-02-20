@@ -171,7 +171,7 @@ del images_test
     #print(i)
 predicted_label = model.predict_generator(generator(features, labels),
                               steps=int(np.floor(len(features) / float(batch_size))))
-print predicted_label.shape
+print(predicted_label.shape)
 output[:,:,:width_pixel,output.shape[3]-3:] = predicted_label[:,:,:,:]
 output[:,:,width_pixel:,output.shape[3]-3:] = np.asarray([1,0,0]) # For all non labeled pixels assume non smoke and non dust
 
@@ -191,7 +191,7 @@ for i, image in enumerate(output):
                 frames[i, row + col * image.shape[0], 5:] = image[row, col, 7:]
             else:
                 frames[i, row + col * image.shape[0], :] = image[row, col, 1:]
-    print i
+    print(i)
 
 np.save(load_file_test + "_predicted_pcl.npy", frames)
 
