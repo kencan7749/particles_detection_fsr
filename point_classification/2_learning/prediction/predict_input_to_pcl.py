@@ -64,7 +64,7 @@ labels = labels[:,:,:width_pixel,:]
 #features = new_features
 #del new_features
 
-print features.shape
+print(features.shape)
 
 img_shape = (features.shape[1:4])
 

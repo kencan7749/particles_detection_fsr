@@ -6,11 +6,13 @@ Stanislas et al., 2019 [Airborne Particle Classification in LiDAR Point Clouds U
 
 [History] 
 
+2021/02/20 KS reviewed
+
 2021/02/13 KS created v0.5
 
 # How to use 
 
-This provides four steps to perform to train and evaluate this model.
+These repository provide four-step scripts to perform to train and evaluate this model.
 
 1. Preprocessing
 2. Training 
@@ -19,7 +21,7 @@ This provides four steps to perform to train and evaluate this model.
 
 ### Environment
 
-I confirmed to run these scripts in this environment
+I confirmed to run these scripts in this environment:
 
 ```python
 Python3.6.10
@@ -27,7 +29,7 @@ tqdm
 tensorflor-gpu= 1.15.0
 numpy
 scipy
-scikit-learn = ??
+scikit-learn
 ```
 
 
@@ -37,7 +39,7 @@ scikit-learn = ??
 [Code]
 
 ```python
-point_classification/1_preprocessing/transform_pointcloud_to_image_representation.py
+python point_classification/1_preprocessing/transform_pointcloud_to_image_representation.py
 ```
 
 Preprocessing 3D LiDAR scan into 2D LiDAR images with each pixel corresponding to an emitted ray and the rows and columns of this image correspond to the vertical and horizontal angular resolution of the LiDAR sensor respectively.
@@ -48,18 +50,18 @@ The preprocessing data should be stored at `point_classification/data`. Note tha
 
 [Input]
 
-The numpy files, whose name starts like "1-dust", "2-dust", ..."14-smoke". These file is specified at line 21,  `file_names` variables.
+The numpy files, whose names start like "1-dust", "2-dust", ..."14-smoke". These files are specified at line 21,  `file_names` variables.
 
 [Output]
 
-Preprocessed files, whose name ends like "1-dust~img.npy" "2-dust~img.npy", "14-smoke~img.npy".
+Preprocessed files, whose names end like "1-dust\~img.npy" "2-dust\~img.npy", "14-smoke~img.npy".
 
 ## 2.Training
 
 [Code] (for example 112 model)
 
 ```python
-point_classification/2_learning/train_cluster/112_train_big_dataset_dual_point_cloud_all_info_validated_update.py
+python point_classification/2_learning/train_cluster/112_train_big_dataset_dual_point_cloud_all_info_validated_update.py
 ```
 
 Train the U-Net architecture model to perform particle detection model from preprocessed images.
@@ -68,13 +70,13 @@ The 9 training files are provided. In my guess, the file names "dual" means "Mul
 
 ##### Requirements
 
-The preprocessed data (ex. 1-dust~img.npy) should be stored at `point_classification/data`.
+The preprocessed data and metadata  are required at proper directory. The preprocessed data (ex. 1-dust~img.npy) should be stored at `point_classification/data`.
 
 The `metadata.npy` should also be stored at `point_classification/data`.
 
 [Input]
 
-- The preprocessed data (ex. 1-dust~img.npy).  These file is specified at line 37,  `file_names` variables. The line 45 and 47, determined whether these files are used for training or validation.
+- The preprocessed data (ex. 1-dust~img.npy).  These files are specified at line 37,  `file_names` variables. The line 45 and 47, determined whether these files are used for training or validation.
 - The`metadata.npy`
 
 [Output]
@@ -82,19 +84,21 @@ The `metadata.npy` should also be stored at `point_classification/data`.
 - Log files at directory `point_classification`. (it should be updated to locate at`point_classification/logs`)
 - Weight files at directory at `point_classification/models`.
 
+Note that the training files are now only supported "112" and "122".
+
 ## 3. Evaluation (under review)
 
 [Code]
 
 ```python
-point_classification/2_learninig/evaluation/evaluate_performance_on_model.py
+python point_classification/2_learninig/evaluation/evaluate_performance_on_model.py
 ```
 
 Evaluate the performance of the trained model by precision, recall and f1 score in scikit-learn.
 
 ##### Requirements 
 
-Trained model files should be located at `point_classification/models'` . These file is specified at line 45, `weight_names` variable to select which trained models are used for evaluation. The preprocessed data (ex. 1-dust~img.npy) should also be needed.  These file is specified at line 30,  `file_names` variables, and line 33 `test_indices` determines which data were used for evaluation.
+Trained model files and preprocessed data are needed. Trained model files should be located at `point_classification/models'` . These files are specified at line 45, `weight_names` variable to select which trained models are used for evaluation. The preprocessed data (ex. 1-dust~img.npy)  are specified at line 30,  `file_names` variables, and line 33 `test_indices` determines which data were used for evaluation.
 
 [Input]
 
@@ -107,7 +111,7 @@ eval_result.txt located at`point_classification/evals`. This file contains the m
 
 
 
-###### Note that currently the evaluation script is less computational efficiency and takes much time to finish. Also I am reviewing scikit-learn version since I observed precision and recall both get 0.0 with warning. 
+###### Note that currently the evaluation script is less computational efficiency and takes much time to finish. 
 
 ## 4.Prediction (under review)
 
