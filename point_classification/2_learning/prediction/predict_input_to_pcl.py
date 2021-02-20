@@ -16,7 +16,7 @@ import glob
 import zipfile
 import functools
 import h5py
-from scipy.misc import imresize
+from PIL import Image
 
 
 load_weights_file = "./dataset/trained_models/weights_big_dataset_111_dual_point_cloud_all_info_run_1.hdf5"
