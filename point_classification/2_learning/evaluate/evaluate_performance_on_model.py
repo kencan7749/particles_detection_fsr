@@ -31,7 +31,7 @@ file_names = ["/1-dust", "/2-dust", "/3-dust", "/4-dust", "/5-dust", "/6-dust", 
               "/10-smoke", "/11-smoke", "/12-smoke", "/13-smoke", "/14-smoke", "/15-smoke", "/16-smoke",
               "/17-smoke", "/18-smoke", "/19-smoke"]
 test_indices = [0, 4, 5, 9, 12, 14, 15, 17]
-test_indices = [0]
+#test_indices = [0]
 file_path = "/media/juli/98F29C83F29C67722/SemesterProject/1_data/1_Upload/final"
 file_path = "./dataset/"
 
