@@ -65,8 +65,8 @@ for run in range(10):
         meta_vector[:,:] = meta
         images_train = np.concatenate([images_train, current_images], axis = 0)
         meta_train = np.concatenate([meta_train, meta_vector], axis = 0)
-    print images_train.shape
-    print meta_train.shape
+    print(images_train.shape)
+    print(meta_train.shape)
     # Test Set
     for i in range(len(test_indices)-1):
         current_images = np.load(file_names[test_indices[i+1]])[metadata[test_indices[i+1],
@@ -76,8 +76,8 @@ for run in range(10):
         meta_vector[:,:] = meta
         images_test = np.concatenate([images_test, current_images], axis = 0)
         meta_test = np.concatenate([meta_test, meta_vector], axis=0)
-    print images_test.shape
-    print meta_test.shape
+    print(images_test.shape)
+    print(meta_test.shape)
 
     # --------------------------------Start of actual software---------------------------------
 
