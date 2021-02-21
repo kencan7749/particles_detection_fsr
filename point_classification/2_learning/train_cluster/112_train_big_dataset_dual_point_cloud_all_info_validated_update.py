@@ -189,8 +189,8 @@ for run in range(10):
         if middle_angle < 0: # Guarantess that at least end or start is in interval
             middle_angle += 2*np.pi
         middle_index = int(np.rint((width)*(middle_angle)/(2*np.pi)))
-        start_index = middle_index - width_pixel/2
-        end_index = middle_index + width_pixel/2
+        start_index = middle_index - width_pixel//2
+        end_index = middle_index + width_pixel//2
         if start_index >= 0 and end_index < width:
             img = img[:, start_index:end_index]
             label_img = label_img[:, start_index:end_index]
