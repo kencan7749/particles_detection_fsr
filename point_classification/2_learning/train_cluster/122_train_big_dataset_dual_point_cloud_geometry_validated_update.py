@@ -29,6 +29,8 @@ for run in range(10):
     metapath = "metadata.npy"
 
     train_indices = [1, 2, 3, 6, 8, 10, 11, 13, 16]
+    #the public dataset is missing 9-smoke
+    train_indices = [1, 2, 3, 6,  10, 11, 13, 16]
     test_indices = [7, 18]
     NAME = '122_dual_point_cloud_geometry_v_u_run_' + str(run+1)
 

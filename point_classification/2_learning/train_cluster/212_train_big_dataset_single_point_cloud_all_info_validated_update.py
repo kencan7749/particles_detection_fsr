@@ -178,12 +178,12 @@ for run in range(10):
 
     save_model_weights = 'models/weights_big_dataset_' + NAME +'.hdf5'
     save_model_weights = 'models/weights_big_dataset_' + NAME +'.hdf5'
-    log_dir = 'logs\\' + NAME
+    log_dir = 'logs/' + NAME
     os.makedirs('models', exist_ok=True)
     os.makedirs(log_dir, exist_ok=True)
     #save_model = 'models/model_big_dataset_always_update.hdf5'
     cp = tf.keras.callbacks.ModelCheckpoint(filepath=save_model_weights, monitor='val_dice_loss', save_best_only=False, verbose=1)
-    cp2 = tf.keras.callbacks.TensorBoard(log_dir='logs\\' + NAME, histogram_freq=0,
+    cp2 = tf.keras.callbacks.TensorBoard(log_dir='logs/' + NAME, histogram_freq=0,
                               write_graph=True, write_images=False)
 
     # Function to augment data and keep randomly selected image of width "width_pixel"
