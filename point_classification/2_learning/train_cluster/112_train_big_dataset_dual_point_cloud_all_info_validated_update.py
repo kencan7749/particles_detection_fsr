@@ -222,7 +222,7 @@ for run in range(10):
     def generator(features, labels, meta_train):
         while True:
             print("\naugmented!\n")
-            print int(np.ceil(len(features) / float(batch_size)))
+            print(int(np.ceil(len(features) / float(batch_size))))
             # Shuffle Arrays in same manner
             permutation = np.random.permutation(len(features))
             features = features[permutation]
