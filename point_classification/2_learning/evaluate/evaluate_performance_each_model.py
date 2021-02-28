@@ -99,8 +99,10 @@ for i, index in enumerate(test_indices):
     # Load Model for each record
     model = return_model(features.shape[1:4], weights_file)
     # Do inference
-    labels_pred_temp = model.predict_generator(generator(features, labels_target_temp, batch_size, width_pixel),
-                                                steps=int(np.floor(len(features) / float(batch_size))))
+    with tf.device('cpu:0'):
+        print("tf.keras code in this scope will run on CPU")
+        labels_pred_temp = model.predict_generator(generator(features, labels_target_temp, batch_size, width_pixel),
+                                                    steps=int(np.floor(len(features) / float(batch_size))))
     del features
     # Filter out zero values returned by LiDAR --> Nice effect: directly transformed to vector representation
     labels_target_temp = labels_target_temp[
