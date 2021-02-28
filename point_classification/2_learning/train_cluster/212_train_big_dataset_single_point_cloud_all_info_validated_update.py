@@ -211,6 +211,10 @@ for run in range(10):
             img, label_img = img[:,::-1,:], label_img[:,::-1,:]
         return img, label_img
 
+    def calculate_percent(label):
+        "return the ratio of particles"
+        return np.sum(label[...,1:]) / label[...,0].size
+
     # Build validation data
     features_test_2 = np.zeros([features_test.shape[0], features_test.shape[1], width_pixel, features_test.shape[3]])
     labels_test_2 = np.zeros([labels_test.shape[0], labels_test.shape[1], width_pixel, labels_test.shape[3]])
@@ -245,6 +249,12 @@ for run in range(10):
                     feature_new[c,:,:,:] = feature
                     label_new[c,:,:,:] = label
                 yield feature_new, label_new
+
+    use_thres_percent = 0.02 # set this value by relative ratio if the training feauter contains 0.1 particle
+    ratios = np.array([calculate_percent(labels_train[i]) for i in range(labels_train.shape[0])])
+    filt = ratios > use_thres_percent
+    features_train = features_train[filt]
+    labels_train = labels_train[filt]
 
     history = model.fit_generator(generator(features_train, labels_train, meta_train),
                                   steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
