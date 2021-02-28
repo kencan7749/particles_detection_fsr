@@ -59,7 +59,7 @@ weight_name = weight_names_dict[model_name]
 run = args.run_number
 #weight_names = weight_names[::-1] # Flip weight_names
 weights_path = "./models/"
-weights_path = "./dataset/trained_models/"
+#weights_path = "./dataset/trained_models/"
 
 eval_dir = "./evals/"
 
@@ -130,6 +130,7 @@ y_target_dust = np.zeros((labels_target.shape[0], 1))
 y_target_fog = np.zeros((labels_target.shape[0], 1))
 
 # Write in prediction vector
+# Write in target vector
 for i, label in tqdm(enumerate(labels_pred)):
     if np.argmax(label) == 1 or np.argmax(label) == 2:
         y_pred_particle[i,0] = 1
@@ -137,15 +138,15 @@ for i, label in tqdm(enumerate(labels_pred)):
         y_pred_dust[i,0] = 1
     elif np.argmax(label) == 2:
         y_pred_fog[i,0] = 1
-del labels_pred
-# Write in target vector
-for i, label in tqdm(enumerate(labels_target)):
-    if np.argmax(label) == 1 or np.argmax(label) == 2:
+
+    label_target = labels_target[i]
+    if np.argmax(label_target) == 1 or np.argmax(label_target) == 2:
         y_target_particle[i,0] = 1
-    if np.argmax(label) == 1:
+    if np.argmax(label_target) == 1:
         y_target_dust[i,0] = 1
-    elif np.argmax(label) == 2:
+    elif np.argmax(label_target) == 2:
         y_target_fog[i,0] = 1
+del labels_pred
 del labels_target
 
 with open(osp.join(eval_dir, eval_results), 'a') as f:
