@@ -217,7 +217,7 @@ for run in range(10):
     def get_only_high_ratio(img, label_img, meta_img, threshold=0.3):
         ret_img, ret_img_label = augment_data(img,label_img, meta_img)
         ratio = calculate_percent(ret_img_label)
-        if ratio > threshold:
+        if ratio >= threshold:
             return ret_img, ret_img_label
         else:
             #print(ratio)
