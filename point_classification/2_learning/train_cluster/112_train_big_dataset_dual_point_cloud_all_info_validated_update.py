@@ -32,6 +32,9 @@ for run in range(10):
     #the public dataset is missing 9-smoke
     train_indices =[1, 2, 3, 6, 10, 11, 13, 16]
     test_indices = [7,18]
+
+    #train_indices =[0,1]
+    #test_indices = [0,1]
     NAME = '112_dual_point_cloud_all_info_v_u_run_' + str(run+1)
 
     # In case we run it on the local pc
@@ -87,6 +90,7 @@ for run in range(10):
     labels_test = images_test[:,:,:,12:15]
     del images_train
     del images_test
+    
 
     width = 2172 # So far empricially for all datasets
     width_pixel = 512
@@ -166,12 +170,14 @@ for run in range(10):
     def dice_loss(y_true, y_pred):
         loss = 1 - dice_coeff(y_true, y_pred)
         return loss
+    #def cross_entropy(true, pred):
+    #    return - K.sum(K.log(1e-9+pred) * true * class_weight, axis=(1,2))
 
     def bce_dice_loss(y_true, y_pred):
         loss = losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
         return loss
 
-    model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'])
+    model.compile(optimizer='adam', loss=bce_dice_loss, metrics=[dice_loss, 'accuracy'], sample_weight_mode="temporal")
 
     model.summary()
 
@@ -205,6 +211,20 @@ for run in range(10):
         if flip_prob > 0.5:
             img, label_img = img[:,::-1,:], label_img[:,::-1,:]
         return img, label_img
+    def calculate_percent(label):
+        "return the ratio of particles"
+        return np.sum(label[...,1:]) / label[...,0].size
+    def get_only_high_ratio(img, label_img, meta_img, threshold=0.3):
+        ret_img, ret_img_label = augment_data(img,label_img, meta_img)
+        ratio = calculate_percent(ret_img_label)
+        if ratio > threshold:
+            return ret_img, ret_img_label
+        else:
+            #print(ratio)
+            threshold_new= np.random.uniform(ratio, threshold)
+            return get_only_high_ratio(img, label_img, meta_img, threshold_new)
+
+
 
     # Build validation data
     features_test_2 = np.zeros([features_test.shape[0], features_test.shape[1], width_pixel, features_test.shape[3]])
@@ -235,18 +255,44 @@ for run in range(10):
                 label_new = np.zeros((batch_size, labels[batch_size*i].shape[0], width_pixel,
                                         labels[batch_size*i].shape[2]))
                 for c in range(batch_size):
-                    feature, label = augment_data(features[batch_size*i+c], labels[batch_size*i+c],
+                    #feature, label = augment_data(features[batch_size*i+c], labels[batch_size*i+c],
+                    #                              meta_train[batch_size*i+c])
+                    feature, label = get_only_high_ratio(features[batch_size*i+c], labels[batch_size*i+c],
                                                   meta_train[batch_size*i+c])
                     feature_new[c,:,:,:] = feature
                     label_new[c,:,:,:] = label
+
                 yield feature_new, label_new
+
+    def gen_only_high_ratio(features, labels, meta_train, threshold=0.05):
+        while True:
+            print("\naugmented!\n")
+            print(int(np.ceil(len(features) / float(batch_size))))
+            # Shuffle Arrays in same manner
+            permutation = np.random.permutation(len(features))
+            features = features[permutation]
+            labels = labels[permutation]
+            meta_train = meta_train[permutation]
+
+        
+
+
+    #history = model.fit_generator(generator(features_train, labels_train, meta_train),
+    #extract image whose ratio is some_threshold
+    use_thres_percent = 0.02 # set this value by relative ratio if the training feauter contains 0.1 particle
+    ratios = np.array([calculate_percent(labels_train[i]) for i in range(labels_train.shape[0])])
+    filt = ratios > use_thres_percent
+    features_train = features_train[filt]
+    labels_train = labels_train[filt]
+    
 
     history = model.fit_generator(generator(features_train, labels_train, meta_train),
                                   steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
                                   epochs = epochs,
                                   validation_data=(features_test, labels_test),
                                   validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
-                                  callbacks=[cp, cp2])
+                                  callbacks=[cp, cp2],
+                                  )
 
     #history = model.fit(dataset,
     #                   steps_per_epoch=int(np.ceil(num_train_examples / float(batch_size))),
@@ -255,4 +301,4 @@ for run in range(10):
     #                   validation_steps=int(np.ceil(num_test_examples / float(batch_size))),
     #                   callbacks=[cp])
 
-    #model.save(save_model)
+    #model.save(save_model) 
